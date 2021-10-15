@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+model Match {
+  id            String         @id @default(dbgenerated()) @map("_id") @db.ObjectId       
+  players       Player[]
+  deck          String?
+  teams         Team[]
+  table         Table[]
+  cards         Cards[]
+}
+
+model Table {
+  id            String         @id @default(dbgenerated()) @map("_id") @db.ObjectId       
+  match         Match          @relation(fields: [matchId], references: [id])
+  matchId       String         @db.ObjectId
+  cards         Cards[]
+  roundValue    Int            @default(1)
+}
+
+model Team {
+  id            String         @id @default(dbgenerated()) @map("_id") @db.ObjectId       
+  points        Int            @default(0)
+  round         Int            @default(0)
+  match         Match          @relation(fields: [matchId], references: [id])
+  matchId       String         @db.ObjectId
+  players       Player[] 
+}
+
+model Player {
+  id            String         @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  match         Match          @relation(fields: [matchId], references: [id])
+  matchId       String         @db.ObjectId
+  cards         Cards[]
+  team          Team?          @relation(fields: [teamId],  references: [id])
+  teamId        String?        @db.ObjectId
+}
+
+model Cards {
+  id            String         @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  value         String
+  suit          String
+  code          String
+  ownerId       String         @db.ObjectId
+  player        Player         @relation(fields: [ownerId], references: [id])
+  table         Table?         @relation(fields: [tableId], references: [id])
+  tableId       String?        @db.ObjectId
+  match         Match          @relation(fields: [matchId], references: [id])
+  matchId       String         @db.ObjectId
+}
