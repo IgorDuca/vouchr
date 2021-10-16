@@ -163,6 +163,58 @@ class MatchControler {
 
         return res.json(foundMatch).status(200)
     }
+
+    public async truco (req: Request, res: Response): Promise<Response> {
+        const foundTable = await prisma.table.findUnique({
+            where: { id: req.body.tableId },
+            include: {
+                match: true
+            }
+        })
+
+        const trucoPlayers = await prisma.player.findMany({ where: { trucoVote: true } })
+
+        const foundMatch = await prisma.match.findUnique({ where: { id: returningId(foundTable?.matchId) }, include: { players: true } })
+
+        var playerlen = foundMatch?.players.length
+        if (playerlen === null) playerlen = 0
+        if (playerlen === undefined) playerlen = 0
+
+        const targetPlayer = await prisma.player.findUnique({ where: { id: req.body.playerId } })
+
+        if(trucoPlayers.length >= playerlen / 2) {
+            var roundValue = foundTable?.roundValue
+            var finalValue: number = 0
+
+            if(roundValue === undefined) roundValue = 0
+
+            if(roundValue === 1) finalValue = 3
+            if(roundValue === 3) finalValue = 6
+            if(roundValue === 6) finalValue = 9
+            if(roundValue === 9) finalValue = 12
+            if(roundValue >= 12) return res.json({ success: false, message: "match exceeded max round points" }).status(404)
+
+            await prisma.table.update({
+                where: { id: req.body.tableId },
+                data: {
+                    roundValue: finalValue
+                }
+            })
+
+            return res.json({ success: true, message: `the new round value is: ${finalValue}` }).status(200)
+        }
+        else {
+            if(targetPlayer?.trucoVote === true) return res.json({ success: false, message:`you already voted, the match need ${playerlen / 2 - this.truco.length} more players to bet the truco` }).status(500)
+            else {
+                await prisma.player.update({
+                    where: { id: req.body.playerId },
+                    data: { trucoVote: true }
+                })
+    
+                return res.json({ success: false, message:`vote computed, the match need ${playerlen / 2 - this.truco.length} more players to bet the truco` }).status(200)
+            }
+        }
+    }
     
     public async finishRound (req: Request, res: Response): Promise<Response> {
         const matchId = req.body.matchId

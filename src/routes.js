@@ -16,6 +16,7 @@ routes.post('/events/cards/shuffle', MatchController.shuffleCards)
 routes.post('/events/rounds/finish', MatchController.finishRound)
 routes.post('/events/cards/clear', MatchController.clearCards)
 routes.post('/events/rows/finish', MatchController.finishRow)
+routes.post('/events/truco', MatchController.truco)
 
 // Misc functions
 routes.get('/player/cards/list/:id', PlayerController.fetchCards)

@@ -44,6 +44,7 @@ model Player {
   cards         Cards[]
   team          Team?          @relation(fields: [teamId],  references: [id])
   teamId        String?        @db.ObjectId
+  trucoVote     Boolean        @default(false)
 }
 
 model Cards {

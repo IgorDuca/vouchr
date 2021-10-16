@@ -53,6 +53,8 @@ And then, install all the needed packages with the command:
 yarn
 ```
 
+After t
+
 ## 🎈 Starting the app <a name="starting"></a>
 
 First things first, you need to start runing the yarn app, using the comand: `yarn dev`
@@ -77,7 +79,7 @@ Example: Listening on: http://localhost:8267
 ### Request body:
 ```
 {
-	"matchId":"6166f4a41e3dfbf45a581408"
+	"matchId":"<<matchId>>"
 }
 ```
 > Parameters: 
@@ -90,7 +92,7 @@ Example: Listening on: http://localhost:8267
 ### Request body:
 ```
 {
-	"matchId":"6166f4a41e3dfbf45a581408"
+	"matchId":"<<matchId>>"
 }
 ```
 > Parameters: 
@@ -103,8 +105,8 @@ Example: Listening on: http://localhost:8267
 ### Request body:
 ```
 {
-	"playerId":"61682e386e377d21079c5ecb",
-	"teamId":"61682e476e377d21079c5ecd"
+	"playerId":"<<playerId>>",
+	"teamId":"<<teamId>>"
 }
 ```
 > Parameters: 
@@ -118,7 +120,7 @@ Example: Listening on: http://localhost:8267
 ### Request body:
 ```
 {
-	"matchId":"6166f4a41e3dfbf45a581408"
+	"matchId":"<<matchId>>"
 }
 ```
 > Parameters: 
@@ -137,16 +139,14 @@ And then you'll recieve a response with all the card values, suits, codes and id
 ### Request body:
 ```
 {
-	"tableId":"6166f4a71e3dfbf45a58140b",
-	"card": "6168341782c968762702f090"
+	"tableId":"<<tableId>>",
+	"card": "<<card>>"
 }
 ```
 > Parameters: 
 >> matchId(String) <br>
 >> card(String)
-
-### The card parameter refers to the card id
-
+>>> The card parameter refers to the card id
 
 ### To finish a round, make a POST request to the route:
 ```
@@ -155,13 +155,26 @@ And then you'll recieve a response with all the card values, suits, codes and id
 ### Request body:
 ```
 {
-	"tableId":"6166f4a71e3dfbf45a58140b",
-	"matchId":"6166f4a41e3dfbf45a581408"
+	"tableId":"<<tableId>>",
+	"matchId":"<<matchId>>"
 }
 ```
 > Parameters: 
 >> matchId(String) <br>
 >> tableId(String)
+
+### To create a truco poll, you need to POST the route:
+``` 
+/events/truco
+```
+### And send a body with this info:
+```
+{
+	"tableId":"<<tableId>>",
+	"playerId":"<<playerId>>"
+}
+```
+### If the poll has the vote numbers equals half of the match player count, the truco event will be triggered and the match round value will increase. If the round value is equal to `1`, the new value will be equal to `3`, if the value is `6`, the new will be `9`, and if it is `9`, the new will be `12`, being twelve the max round value
 
 ### To clear all the cads in the match, make a POST request to the route:
 ```
@@ -190,7 +203,6 @@ And then you'll recieve a response with all the card values, suits, codes and id
 > Parameters: 
 >> matchId(String) <br>
 >> tableId(String)
-
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
